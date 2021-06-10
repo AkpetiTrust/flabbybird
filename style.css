@@ -14,6 +14,9 @@ body {
 
 .score-div {
   display: none;
+  position: absolute;
+  right: 30px;
+  top: 120px;
 }
 
 .main {

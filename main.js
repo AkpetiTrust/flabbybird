@@ -2,6 +2,10 @@ const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
 let gameStart = false;
 let isReplaying = false;
+let highScore = localStorage.getItem("flappyScore")
+  ? Number(localStorage.getItem("flappyScore"))
+  : 0;
+let score = 0;
 const bird = {
   image: document.querySelector("#bird"),
   x: 20,
@@ -71,6 +75,19 @@ function drawBird() {
   bird.update();
 }
 
+function writeScore() {
+  document.querySelector(".high-score").innerHTML = highScore;
+  document.querySelector(".score").innerHTML = score;
+  if (gameStart) {
+    score++;
+  }
+  if (score >= highScore) {
+    highScore = score;
+  }
+}
+
+writeScore();
+
 bird.image.src = "./images/bird.png";
 bird.image.addEventListener("load", drawBird);
 
@@ -114,14 +131,17 @@ function updateGame() {
 
 document.querySelector(".start").addEventListener("click", (e) => {
   // Reset
+  document.querySelector(".score-div").style.display = "initial";
   gameStart = true;
   bird.speed = 2;
   bird.dy = 2;
   bird.y = 20;
   obstacles = [];
+  score = 0;
 
   if (!isReplaying) {
     updateGame();
+    setInterval(writeScore, 200);
   }
   e.target.disabled = true;
   e.target.classList.add("disabled");
@@ -141,6 +161,7 @@ document.querySelector(".start").addEventListener("click", (e) => {
 });
 
 function gameOver() {
+  localStorage.setItem("flappyScore", String(highScore));
   document.querySelector(".start").disabled = false;
   document.querySelector(".start").classList.remove("disabled");
   isReplaying = true;
